@@ -3,7 +3,10 @@ name = "morphx-wordlist"
 version = "0.1.0"
 edition = "2021"
 description = "keyword based wordlist generator"
+readme = "README.md"
 repository = "https://github.com/nurfianqodar/morphx-wordlist"
+license = "MIT"
+categories = ["command-line-utilities", "text-processing"]
 
 [[bin]]
 name = "morphx"
