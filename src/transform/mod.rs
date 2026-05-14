@@ -21,13 +21,13 @@ pub enum Transform {
 }
 
 impl Transform {
-    pub fn transform(self, word: &str) -> Option<String> {
+    pub fn transform(&self, word: &str) -> Option<String> {
         let out = match self {
             Self::Original => word.to_string(),
             Self::Upper => word.to_ascii_uppercase(),
             Self::Lower => word.to_ascii_lowercase(),
             Self::Leet => word.to_leetspeak(),
-            Self::Sponge(v) => word.to_sponge(v),
+            Self::Sponge(v) => word.to_sponge(v.clone()),
             Self::Reverse => word.chars().rev().collect(),
             Self::Title => word.to_titlecase(),
         };

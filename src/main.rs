@@ -2,5 +2,9 @@ use clap::Parser;
 use morphx_wordlist::cli::Command;
 
 fn main() {
-    _ = Command::parse();
+    let cmd = Command::parse();
+    match cmd.run() {
+        Err(e) => println!("{}", e),
+        _ => (),
+    }
 }
