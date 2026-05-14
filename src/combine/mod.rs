@@ -1,8 +1,6 @@
+mod random_symbols;
+use crate::{combine::random_symbols::JoinRandomSymbols, error::Error};
 use std::str::FromStr;
-
-use rand::seq::IteratorRandom;
-
-use crate::error::Error;
 
 #[derive(Debug, Clone)]
 pub enum Combine {
@@ -16,14 +14,7 @@ impl Combine {
         match self {
             Self::Concat => words.join(""),
             Self::Separator(sep) => words.join(sep),
-            Self::RandomSymbols(syms) => {
-                let mut rng = rand::rng();
-                let sep = syms
-                    .chars()
-                    .choose(&mut rng)
-                    .expect("syms already specified");
-                words.join(&sep.to_string())
-            }
+            Self::RandomSymbols(syms) => words.join_random_symbols(syms),
         }
     }
 }
