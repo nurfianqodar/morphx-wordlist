@@ -12,15 +12,15 @@ use clap::Parser;
 pub struct Command {
     /// Base keywords
     ///
-    /// Format:
-    ///     -k [,<KEYWORD>]
+    /// Format: [,<KEYWORD>]
+    ///
+    /// KEYWORD: any string
     #[arg(long, short, required = true, value_delimiter = ',')]
     keywords: Vec<String>,
 
     /// Keywords transforms options
     ///
-    /// Format:
-    ///     -t <TRANSFORM>[,<TRANSFORM>]
+    /// Format: <TRANSFORM>[,<TRANSFORM>]
     ///
     /// TRANSFORM:
     ///     original|upper|lower|leet|sponge:<SPONGE_VARIANT>|reverse|title
@@ -32,30 +32,23 @@ pub struct Command {
 
     /// Keywords combine options
     ///
-    /// Format:
-    ///     -c <COMBINE>[,<COMBINE>]
+    /// Format: <COMBINE>[,<COMBINE>]
     ///
-    /// COMBINE:
-    ///     concat|separator:<SEPARATOR>|random-symbols:<SYMBOLS>
+    /// COMBINE: concat|separator:<SEPARATOR>|random-symbols:<SYMBOLS>
     ///
-    /// SEPARATOR:
-    ///     any string
+    /// SEPARATOR: any string
     ///
-    /// SYMBOLS:
-    ///     any string
+    /// SYMBOLS: any string
     #[arg(long, short, required = true, value_delimiter = ',')]
     combine: Vec<Combine>,
 
     /// Keywords sampling options
     ///
-    /// Format:
-    ///     -s <SAMPLER>[,<SAMPLER>]
+    /// Format: <SAMPLER>[,<SAMPLER>]
     ///
-    /// SAMPLER:
-    ///     permutation:<SIZE>|combination:<SIZE>|cartesian-product:<SIZE>
+    /// SAMPLER: permutation:<SIZE>|combination:<SIZE>|cartesian-product:<SIZE>
     ///
-    /// SIZE:
-    ///     non negative integer
+    /// SIZE: non negative integer
     #[arg(long, short = 'S', required = true, value_delimiter = ',')]
     sampler: Vec<Sampler>,
 
@@ -64,6 +57,8 @@ pub struct Command {
     prefix: Option<Vec<String>>,
 
     /// Suffixes to add after combined
+    ///
+    /// Format: <SUFFIX>[,<SUFFIX>]
     #[arg(long, short, required = false, value_delimiter = ',')]
     suffix: Option<Vec<String>>,
 
