@@ -6,67 +6,127 @@ use crate::result::Result;
 use crate::{combine::Combine, sampler::Sampler, transform::Transform};
 use clap::Parser;
 
-/// morphx: Keywords based wordlist generator
+const KEYWORDS_HELP: &str = "base keywords";
+const KEYWORDS_LONG_HELP: &str = r#"base keyowrds
+format:
+    [,<KEYWORD>]
+KEYWORD:
+    any string"#;
+
+const TRANSFORM_HELP: &str = "keyowrds transform options";
+const TRANSFORM_LONG_HELP: &str = r#"keyowrds transform options
+format:
+    <TRANSFORM>[,<TRANSFORM>]
+TRANSFORM:
+    original|upper|lower|leet|sponge:<SPONGE_VARIANT>|reverse|title
+SPONGE_VARIANT:
+    lower-first|upper-first|random"#;
+
+const COMBINE_HELP: &str = "keywords combine options";
+const COMBINE_LONG_HELP: &str = r#"keyowrds combine options
+format:
+    <COMBINE>[,<COMBINE>]
+COMBINE:
+    concat|separator:<SEPARATOR>|random-symbols:<SYMBOLS>
+SEPARATOR:
+    any string
+SYMBOLS:
+    any string"#;
+
+const SAMPLER_HELP: &str = "keyowrds sampling options";
+const SAMPLER_LONG_HELP: &str = "keyowrds sampling options
+format:
+    <SAMPLER>[,<SAMPLER>]
+SAMPLER:
+    permutation<SIZE>|combination:<SIZE>|cartesian-product:<SIZE>
+SIZE:
+    non-zero and non-negative integer";
+
+const PREFIX_HELP: &str = "prefixes applied after combine";
+const PREFIX_LONG_HELP: &str = r#"prefixes applied after combine
+format:
+    <PREFIX>[,<PREFIX>]
+PREFIX:
+    any string"#;
+
+const SUFFIX_HELP: &str = "suffixes applied after combine";
+const SUFFIX_LONG_HELP: &str = r#"suffixes applied after combine
+format:
+    <SUFFIX>[,<SUFFIX>]
+SUFFIX:
+    any string"#;
+
+const WRITE_HELP: &str = "write file path (default: stdout)";
+
 #[derive(Debug, Parser)]
 #[command(version, about, author, long_about = None)]
 pub struct Command {
-    /// Base keywords
-    ///
-    /// Format: [,<KEYWORD>]
-    ///
-    /// KEYWORD: any string
-    #[arg(long, short, required = true, value_delimiter = ',')]
+    #[arg(
+        long,
+        short,
+        required = true,
+        value_delimiter = ',',
+        help = KEYWORDS_HELP,
+        long_help = KEYWORDS_LONG_HELP,
+    )]
     keywords: Vec<String>,
 
-    /// Keywords transforms options
-    ///
-    /// Format: <TRANSFORM>[,<TRANSFORM>]
-    ///
-    /// TRANSFORM:
-    ///     original|upper|lower|leet|sponge:<SPONGE_VARIANT>|reverse|title
-    ///
-    /// SPONGE_VARIANT:
-    ///     lower-first|upper-first|random
-    #[arg(long, short, required = true, value_delimiter = ',')]
+    #[arg(
+        long,
+        short,
+        required = true,
+        value_delimiter = ',',
+        help = TRANSFORM_HELP,
+        long_help = TRANSFORM_LONG_HELP,
+    )]
     transform: Vec<Transform>,
 
-    /// Keywords combine options
-    ///
-    /// Format: <COMBINE>[,<COMBINE>]
-    ///
-    /// COMBINE: concat|separator:<SEPARATOR>|random-symbols:<SYMBOLS>
-    ///
-    /// SEPARATOR: any string
-    ///
-    /// SYMBOLS: any string
-    #[arg(long, short, required = true, value_delimiter = ',')]
+    #[arg(
+        long,
+        short,
+        required = true,
+        value_delimiter = ',',
+        help = COMBINE_HELP,
+        long_help = COMBINE_LONG_HELP,
+    )]
     combine: Vec<Combine>,
 
-    /// Keywords sampling options
-    ///
-    /// Format: <SAMPLER>[,<SAMPLER>]
-    ///
-    /// SAMPLER: permutation:<SIZE>|combination:<SIZE>|cartesian-product:<SIZE>
-    ///
-    /// SIZE: non negative integer
-    #[arg(long, short = 'S', required = true, value_delimiter = ',')]
+    #[arg(
+        long,
+        short = 'S',
+        required = true,
+        value_delimiter = ',',
+        help = SAMPLER_HELP,
+        long_help= SAMPLER_LONG_HELP,
+    )]
     sampler: Vec<Sampler>,
 
-    /// Prefixes to add after combined
-    #[arg(long, short, required = false, value_delimiter = ',')]
+    #[arg(
+        long,
+        short,
+        required = false,
+        value_delimiter = ',',
+        help = PREFIX_HELP,
+        long_help = PREFIX_LONG_HELP,
+    )]
     prefix: Option<Vec<String>>,
 
-    /// Suffixes to add after combined
-    ///
-    /// Format: <SUFFIX>[,<SUFFIX>]
-    #[arg(long, short, required = false, value_delimiter = ',')]
+    #[arg(
+        long,
+        short,
+        required = false,
+        value_delimiter = ',',
+        help = SUFFIX_HELP,
+        long_help = SUFFIX_LONG_HELP,
+    )]
     suffix: Option<Vec<String>>,
 
-    /// Write output to file
-    ///
-    /// Format:
-    ///     -s <FILE_PATH>
-    #[arg(long, short, required = false)]
+    #[arg(
+        long,
+        short,
+        required = false,
+        help = WRITE_HELP
+    )]
     write: Option<String>,
 }
 
