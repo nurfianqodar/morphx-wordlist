@@ -1,3 +1,6 @@
+use clap::Parser;
+use morphx_wordlist::cli::Command;
+
 fn main() {
-    println!("Hello, world!");
+    _ = Command::parse();
 }
