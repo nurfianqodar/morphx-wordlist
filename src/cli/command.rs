@@ -66,6 +66,8 @@ format:
 SUFFIX:
     any string"#;
 
+const MIN_HELP: &str = "minimum length of generated keywords";
+
 const WRITE_HELP: &str = "write file path (default: stdout)";
 
 #[derive(Debug, Parser)]
@@ -135,6 +137,14 @@ pub struct Command {
         long,
         short,
         required = false,
+        help = MIN_HELP,
+    )]
+    min: Option<usize>,
+
+    #[arg(
+        long,
+        short,
+        required = false,
         help = WRITE_HELP
     )]
     write: Option<String>,
@@ -170,17 +180,35 @@ impl Command {
             for c in &self.combine {
                 for sub in s.sample_iter(&keywords.clone()) {
                     let word = c.combine(&sub);
-                    writeln!(&mut writer, "{}", word)?;
+                    if let Some(min) = self.min {
+                        if word.len() >= min {
+                            writeln!(&mut writer, "{}", word)?;
+                        }
+                    } else {
+                        writeln!(&mut writer, "{}", word)?;
+                    }
 
                     if let Some(prefixes) = &self.prefix {
                         for prefix in prefixes {
-                            writeln!(&mut writer, "{}{}", prefix, word)?;
+                            if let Some(min) = self.min {
+                                if word.len() >= min {
+                                    writeln!(&mut writer, "{}{}", prefix, word)?;
+                                }
+                            } else {
+                                writeln!(&mut writer, "{}{}", prefix, word)?;
+                            }
                         }
                     }
 
                     if let Some(suffixes) = &self.suffix {
                         for suffix in suffixes {
-                            writeln!(&mut writer, "{}{}", word, suffix)?;
+                            if let Some(min) = self.min {
+                                if word.len() >= min {
+                                    writeln!(&mut writer, "{}{}", word, suffix)?;
+                                }
+                            } else {
+                                writeln!(&mut writer, "{}{}", word, suffix)?;
+                            }
                         }
                     }
                 }
