@@ -15,9 +15,9 @@ impl FromStr for SpongeVariant {
     type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "lower-first" => Ok(Self::LowerFirst),
-            "upper-first" => Ok(Self::UpperFirst),
-            "random" => Ok(Self::Random),
+            "lower-first" | "l" => Ok(Self::LowerFirst),
+            "upper-first" | "u" => Ok(Self::UpperFirst),
+            "random" | "r" => Ok(Self::Random),
             _ => Err(Error::Arg(
                 "invalid sponge variant (use: lower-first|upper-first|random)",
             )),

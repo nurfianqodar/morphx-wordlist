@@ -45,7 +45,7 @@ impl FromStr for Transform {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (name, arg) = s.split_once(':').unwrap_or((s, ""));
         match name {
-            "original" => {
+            "original" | "o" => {
                 if !arg.is_empty() {
                     Err(Error::Arg("original does not accept argument"))
                 } else {
@@ -53,7 +53,7 @@ impl FromStr for Transform {
                 }
             }
 
-            "upper" => {
+            "upper" | "u" => {
                 if !arg.is_empty() {
                     Err(Error::Arg("upper does not accept argument"))
                 } else {
@@ -61,7 +61,7 @@ impl FromStr for Transform {
                 }
             }
 
-            "lower" => {
+            "lower" | "l" => {
                 if !arg.is_empty() {
                     Err(Error::Arg("lower does not accept argument"))
                 } else {
@@ -69,7 +69,7 @@ impl FromStr for Transform {
                 }
             }
 
-            "leet" => {
+            "leet" | "L" => {
                 if !arg.is_empty() {
                     Err(Error::Arg("leet does not accept argument"))
                 } else {
@@ -77,7 +77,7 @@ impl FromStr for Transform {
                 }
             }
 
-            "sponge" => {
+            "sponge" | "s" => {
                 if arg.is_empty() {
                     Err(Error::Arg(
                         "sponge require an argunent (lower-first|upper-first|random)",
@@ -87,7 +87,7 @@ impl FromStr for Transform {
                 }
             }
 
-            "reverse" => {
+            "reverse" | "r" => {
                 if !arg.is_empty() {
                     Err(Error::Arg("reverse does not accept argument"))
                 } else {
@@ -95,7 +95,7 @@ impl FromStr for Transform {
                 }
             }
 
-            "title" => {
+            "title" | "t" => {
                 if !arg.is_empty() {
                     Err(Error::Arg("title does not accept argument"))
                 } else {

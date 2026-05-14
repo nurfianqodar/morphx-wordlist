@@ -18,7 +18,13 @@ const TRANSFORM_LONG_HELP: &str = r#"keyowrds transform options
 format:
     <TRANSFORM>[,<TRANSFORM>]
 TRANSFORM:
-    original|upper|lower|leet|sponge:<SPONGE_VARIANT>|reverse|title
+    - [o] | original
+    - [u] | upper
+    - [l] | lower
+    - [L] | leet
+    - [s] | sponge:<SPONGE_VARIANT>
+    - [r] | reverse
+    - [t] | title
 SPONGE_VARIANT:
     lower-first|upper-first|random"#;
 
@@ -27,7 +33,9 @@ const COMBINE_LONG_HELP: &str = r#"keyowrds combine options
 format:
     <COMBINE>[,<COMBINE>]
 COMBINE:
-    concat|separator:<SEPARATOR>|random-symbols:<SYMBOLS>
+    - [c] | concat
+    - [s] | separator:<SEPARATOR>
+    - [r] | random-symbols:<SYMBOLS>
 SEPARATOR:
     any string
 SYMBOLS:
@@ -38,7 +46,9 @@ const SAMPLER_LONG_HELP: &str = "keyowrds sampling options
 format:
     <SAMPLER>[,<SAMPLER>]
 SAMPLER:
-    permutation<SIZE>|combination:<SIZE>|cartesian-product:<SIZE>
+    - [p] | permutation<SIZE>
+    - [c] | combination:<SIZE>
+    - [C] | cartesian-product:<SIZE>
 SIZE:
     non-zero and non-negative integer";
 

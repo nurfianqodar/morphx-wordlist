@@ -42,7 +42,7 @@ impl FromStr for Sampler {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (name, arg) = s.split_once(':').unwrap_or((s, ""));
         match name {
-            "permutation" => {
+            "permutation" | "p" => {
                 if arg.is_empty() {
                     Err(Error::Arg("permutation sampler require an argument"))
                 } else {
@@ -53,7 +53,7 @@ impl FromStr for Sampler {
                 }
             }
 
-            "combination" => {
+            "combination" | "c" => {
                 if arg.is_empty() {
                     Err(Error::Arg("combination sampler require an argument"))
                 } else {
@@ -64,7 +64,7 @@ impl FromStr for Sampler {
                 }
             }
 
-            "cartesian-product" => {
+            "cartesian-product" | "C" => {
                 if arg.is_empty() {
                     Err(Error::Arg("cartesian-product sampler require an argument"))
                 } else {

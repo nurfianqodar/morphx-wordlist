@@ -34,7 +34,7 @@ impl FromStr for Combine {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (name, arg) = s.split_once(':').unwrap_or((s, ""));
         match name {
-            "concat" => {
+            "concat" | "c" => {
                 if !arg.is_empty() {
                     Err(Error::Arg("concat does not accept argument"))
                 } else {
@@ -42,7 +42,7 @@ impl FromStr for Combine {
                 }
             }
 
-            "separator" => {
+            "separator" | "s" => {
                 if arg.is_empty() {
                     Err(Error::Arg("separator require an agument"))
                 } else {
@@ -50,7 +50,7 @@ impl FromStr for Combine {
                 }
             }
 
-            "random-symbols" => {
+            "random-symbols" | "r" => {
                 if arg.is_empty() {
                     Err(Error::Arg("random symbol require an agument"))
                 } else {
