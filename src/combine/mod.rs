@@ -32,7 +32,7 @@ Notes:
 pub enum Combine {
     Concat,
     Separator(String),
-    RandomSymbols(String),
+    RandomSymbols(Vec<char>),
 }
 
 impl Combine {
@@ -71,7 +71,7 @@ impl FromStr for Combine {
                 if arg.is_empty() {
                     Err(Error::Arg("random symbol require an agument"))
                 } else {
-                    Ok(Self::RandomSymbols(arg.to_string()))
+                    Ok(Self::RandomSymbols(arg.chars().collect()))
                 }
             }
 
