@@ -11,6 +11,14 @@ use std::io::Write;
 use crate::combine::COMBINE_LONG_HELP;
 use crate::sampler::SAMPLER_LONG_HELP;
 use crate::transform::TRANSFORM_LONG_HELP;
+const KEYWORDS_LONG_HELP: &str = "\
+List of base keywords. Values are separated
+by commas.
+
+Example:
+    --keywords foo,bar,baz
+    equal to
+    -k foo,bar,baz";
 const PREFIXES_LONG_HELP: &str = "\
 List of prefixes applied before output.
 Values are separated by commas.
@@ -42,12 +50,18 @@ processed.
 
 Example:
     --min 8
+    equal to
+    -m 8
 
 Notes:
     Values shorter than the minimum length
     are skipped. When not specified, no
     minimum length filter is applied.
 ";
+pub const WRITE_HELP: &str = "\
+    Write to a file instead of stdout
+";
+
 #[derive(Parser)]
 pub struct Cli {
     #[arg(short, long, required = true, value_delimiter = ',')]
@@ -68,11 +82,11 @@ pub struct Cli {
     #[arg(long, required = false, value_delimiter = ',', long_help = PREFIXES_LONG_HELP)]
     prefixes: Vec<String>,
 
-    #[arg(long, required = false, short)]
-    write: Option<String>,
-
-    #[arg(long, required = false, short, long_help = MIN_LONG_HELP)]
+    #[arg(short, long, required = false, long_help = MIN_LONG_HELP)]
     min: Option<usize>,
+
+    #[arg(short, long, required = false, help = WRITE_HELP)]
+    write: Option<String>,
 }
 
 impl Cli {
