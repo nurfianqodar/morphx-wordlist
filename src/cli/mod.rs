@@ -64,7 +64,7 @@ pub const WRITE_HELP: &str = "\
 
 #[derive(Parser)]
 pub struct Cli {
-    #[arg(short, long, required = true, value_delimiter = ',')]
+    #[arg(short, long, required = true, value_delimiter = ',', long_help = KEYWORDS_LONG_HELP)]
     keywords: Vec<String>,
 
     #[arg(short, long, required = true, value_delimiter = ',', long_help = TRANSFORM_LONG_HELP)]
