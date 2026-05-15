@@ -1,10 +1,9 @@
-use std::collections::HashSet;
-use std::fs::File;
-use std::io::{self, BufWriter};
-
 use crate::result::Result;
 use crate::{combine::Combine, sampler::Sampler, transform::Transform};
 use clap::Parser;
+use std::collections::HashSet;
+use std::fs::File;
+use std::io::{self, BufWriter};
 
 const KEYWORDS_HELP: &str = "base keywords";
 const KEYWORDS_LONG_HELP: &str = r#"base keyowrds
@@ -22,7 +21,7 @@ TRANSFORM:
     - [u] | upper
     - [l] | lower
     - [L] | leet
-    - [s] | sponge:<SPONGE_VARIANT>
+    - [s:<SPONGE_VARIANT>] | sponge:<SPONGE_VARIANT>
     - [r] | reverse
     - [t] | title
 SPONGE_VARIANT:
@@ -34,8 +33,8 @@ format:
     <COMBINE>[,<COMBINE>]
 COMBINE:
     - [c] | concat
-    - [s] | separator:<SEPARATOR>
-    - [r] | random-symbols:<SYMBOLS>
+    - [s:<SEPARATOR>] | separator:<SEPARATOR>
+    - [r:<SYMBOLS>] | random-symbols:<SYMBOLS>
 SEPARATOR:
     any string
 SYMBOLS:
@@ -130,45 +129,83 @@ impl Command {
             .map(|s| s.as_str())
             .collect::<Vec<&str>>();
 
-        for s in &self.sampler {
-            for c in &self.combine {
-                for sub in s.sample_iter(&keywords.clone()) {
-                    let word = c.combine(&sub);
-                    if let Some(min) = self.min {
-                        if word.len() >= min {
-                            writeln!(&mut writer, "{}", word)?;
-                        }
-                    } else {
-                        writeln!(&mut writer, "{}", word)?;
-                    }
-
-                    if let Some(prefixes) = &self.prefix {
-                        for prefix in prefixes {
-                            if let Some(min) = self.min {
-                                if word.len() >= min {
-                                    writeln!(&mut writer, "{}{}", prefix, word)?;
-                                }
-                            } else {
-                                writeln!(&mut writer, "{}{}", prefix, word)?;
-                            }
-                        }
-                    }
-
-                    if let Some(suffixes) = &self.suffix {
-                        for suffix in suffixes {
-                            if let Some(min) = self.min {
-                                if word.len() >= min {
-                                    writeln!(&mut writer, "{}{}", word, suffix)?;
-                                }
-                            } else {
-                                writeln!(&mut writer, "{}{}", word, suffix)?;
-                            }
-                        }
-                    }
+        for sampler in &self.sampler {
+            for combine in &self.combine {
+                for sub in sampler.sample_iter(&keywords) {
+                    write_combine(
+                        &mut writer,
+                        sub.as_ref(),
+                        combine,
+                        self.min,
+                        self.prefix.as_deref(),
+                        self.suffix.as_deref(),
+                    )?;
                 }
             }
         }
 
         Ok(())
     }
+}
+
+fn write_with_suffix<W>(writer: &mut W, word: &str, suffix: &str, min: Option<usize>) -> Result<()>
+where
+    W: io::Write,
+{
+    if let Some(m) = min {
+        if (word.len() + suffix.len()) >= m {
+            writeln!(writer, "{}{}", word, suffix)?;
+        }
+    } else {
+        writeln!(writer, "{}{}", word, suffix)?;
+    }
+    Ok(())
+}
+
+fn write_with_prefix<W>(writer: &mut W, word: &str, prefix: &str, min: Option<usize>) -> Result<()>
+where
+    W: io::Write,
+{
+    if let Some(m) = min {
+        if (word.len() + prefix.len()) >= m {
+            writeln!(writer, "{}{}", prefix, word)?;
+        }
+    } else {
+        writeln!(writer, "{}{}", prefix, word)?;
+    }
+    Ok(())
+}
+
+fn write_combine<W>(
+    writer: &mut W,
+    sub: &[&str],
+    combine: &Combine,
+    min: Option<usize>,
+    prefixes: Option<&[String]>,
+    suffixes: Option<&[String]>,
+) -> Result<()>
+where
+    W: io::Write,
+{
+    let word = combine.combine(sub);
+    if let Some(m) = min {
+        if word.len() >= m {
+            writeln!(writer, "{}", word)?;
+        }
+    } else {
+        writeln!(writer, "{}", word)?;
+    }
+
+    if let Some(pref) = prefixes {
+        for p in pref {
+            write_with_prefix(writer, &word, p, min)?;
+        }
+    }
+
+    if let Some(suff) = suffixes {
+        for s in suff {
+            write_with_suffix(writer, &word, s, min)?;
+        }
+    }
+    Ok(())
 }
