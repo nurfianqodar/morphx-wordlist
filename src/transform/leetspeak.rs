@@ -7,21 +7,22 @@ where
     S: AsRef<str>,
 {
     fn to_leetspeak(&self) -> String {
-        let mut out = String::with_capacity(self.as_ref().len());
-        self.as_ref().chars().for_each(|c| {
-            let c = match c.to_ascii_lowercase() {
-                'a' => '4',
-                'e' => '3',
-                'i' => '1',
-                'l' => '1',
-                'o' => '0',
-                's' => '5',
-                't' => '7',
-                'z' => '2',
+        let s = self.as_ref();
+        let mut out = String::with_capacity(s.len());
+        for c in s.chars() {
+            let c = match c {
+                'a' | 'A' => '4',
+                'e' | 'E' => '3',
+                'i' | 'I' => '1',
+                'l' | 'L' => '1',
+                'o' | 'O' => '0',
+                's' | 'S' => '5',
+                't' | 'T' => '7',
+                'z' | 'Z' => '2',
                 _ => c,
             };
             out.push(c);
-        });
+        }
         out
     }
 }
