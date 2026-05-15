@@ -3,8 +3,7 @@ use morphx_wordlist::cli::Cli;
 
 fn main() {
     let cli = Cli::parse().sanitize();
-    match cli.run() {
-        Err(e) => eprintln!("{e}"),
-        _ => (),
+    if let Err(e) = cli.run() {
+        eprintln!("{e}");
     }
 }

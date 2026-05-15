@@ -1,5 +1,4 @@
 use crate::error::Error;
-use rand::RngExt;
 use std::str::FromStr;
 
 #[derive(Debug, Clone)]
@@ -25,7 +24,7 @@ impl FromStr for SpongeVariant {
 
 impl SpongeVariant {
     fn should_uppercase(&self, idx: usize) -> bool {
-        let is_even = idx % 2 == 0;
+        let is_even = idx.is_multiple_of(2);
         match self {
             Self::UpperFirst => is_even,
             Self::LowerFirst => !is_even,
