@@ -73,80 +73,34 @@ const WRITE_HELP: &str = "write file path (default: stdout)";
 #[derive(Debug, Parser)]
 #[command(version, about, author, long_about = None)]
 pub struct Command {
-    #[arg(
-        long,
-        short,
-        required = true,
-        value_delimiter = ',',
-        help = KEYWORDS_HELP,
-        long_help = KEYWORDS_LONG_HELP,
-    )]
+    #[arg(long, short, required = true, value_delimiter = ',',
+        help = KEYWORDS_HELP, long_help = KEYWORDS_LONG_HELP)]
     keywords: Vec<String>,
 
-    #[arg(
-        long,
-        short,
-        required = true,
-        value_delimiter = ',',
-        help = TRANSFORM_HELP,
-        long_help = TRANSFORM_LONG_HELP,
-    )]
+    #[arg(long, short, required = true, value_delimiter = ',',
+        help = TRANSFORM_HELP, long_help = TRANSFORM_LONG_HELP)]
     transform: Vec<Transform>,
 
-    #[arg(
-        long,
-        short,
-        required = true,
-        value_delimiter = ',',
-        help = COMBINE_HELP,
-        long_help = COMBINE_LONG_HELP,
-    )]
+    #[arg(long, short, required = true, value_delimiter = ',',
+        help = COMBINE_HELP, long_help = COMBINE_LONG_HELP)]
     combine: Vec<Combine>,
 
-    #[arg(
-        long,
-        short = 'S',
-        required = true,
-        value_delimiter = ',',
-        help = SAMPLER_HELP,
-        long_help= SAMPLER_LONG_HELP,
-    )]
+    #[arg(long, short = 'S', required = true, value_delimiter = ',',
+        help = SAMPLER_HELP, long_help= SAMPLER_LONG_HELP)]
     sampler: Vec<Sampler>,
 
-    #[arg(
-        long,
-        short,
-        required = false,
-        value_delimiter = ',',
-        help = PREFIX_HELP,
-        long_help = PREFIX_LONG_HELP,
-    )]
+    #[arg(long, short, required = false, value_delimiter = ',',
+        help = PREFIX_HELP, long_help = PREFIX_LONG_HELP)]
     prefix: Option<Vec<String>>,
 
-    #[arg(
-        long,
-        short,
-        required = false,
-        value_delimiter = ',',
-        help = SUFFIX_HELP,
-        long_help = SUFFIX_LONG_HELP,
-    )]
+    #[arg(long, short, required = false, value_delimiter = ',',
+        help = SUFFIX_HELP, long_help = SUFFIX_LONG_HELP)]
     suffix: Option<Vec<String>>,
 
-    #[arg(
-        long,
-        short,
-        required = false,
-        help = MIN_HELP,
-    )]
+    #[arg(long, short, required = false, help = MIN_HELP)]
     min: Option<usize>,
 
-    #[arg(
-        long,
-        short,
-        required = false,
-        help = WRITE_HELP
-    )]
+    #[arg(long, short, required = false, help = WRITE_HELP)]
     write: Option<String>,
 }
 
