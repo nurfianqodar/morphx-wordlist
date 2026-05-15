@@ -4,6 +4,7 @@ use clap::Parser;
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::{self, BufWriter};
+use std::rc::Rc;
 
 const KEYWORDS_HELP: &str = "base keywords";
 const KEYWORDS_LONG_HELP: &str = r#"base keyowrds
@@ -104,31 +105,21 @@ pub struct Command {
 }
 
 impl Command {
-    pub fn run(&self) -> Result<()> {
-        let mut writer: Box<dyn io::Write>;
-        if let Some(path) = &self.write {
-            let f = File::create_new(path)?;
-            writer = Box::new(BufWriter::new(f));
-        } else {
-            writer = Box::new(io::stdout());
-        }
+    pub fn run(&mut self) -> Result<()> {
+        self.wirte()?;
+        Ok(())
+    }
 
-        let mut keyword_set = HashSet::<String>::new();
-        // Transform keywords
-        self.keywords.iter().for_each(|s| {
-            keyword_set.insert(s.to_string());
-            for t in &self.transform {
-                if let Some(word) = t.transform(s.as_ref()) {
-                    keyword_set.insert(word);
-                }
-            }
-        });
+    pub fn m_parse() -> Self {
+        let mut me = Self::parse();
+        me.transform_keywords();
+        me
+    }
 
-        let keywords = keyword_set
-            .iter()
-            .map(|s| s.as_str())
-            .collect::<Vec<&str>>();
-
+    fn wirte(&mut self) -> Result<()> {
+        self.transform_keywords();
+        let keywords = self.keywords();
+        let mut writer = self.writer()?;
         for sampler in &self.sampler {
             for combine in &self.combine {
                 for sub in sampler.sample_iter(&keywords) {
@@ -143,39 +134,47 @@ impl Command {
                 }
             }
         }
-
         Ok(())
     }
-}
 
-fn write_with_suffix<W>(writer: &mut W, word: &str, suffix: &str, min: Option<usize>) -> Result<()>
-where
-    W: io::Write,
-{
-    if let Some(m) = min {
-        if (word.len() + suffix.len()) >= m {
-            writeln!(writer, "{}{}", word, suffix)?;
+    fn writer(&self) -> Result<Box<dyn io::Write>> {
+        if let Some(path) = &self.write {
+            let f = File::create_new(path)?;
+            Ok(Box::new(BufWriter::new(f)))
+        } else {
+            Ok(Box::new(io::stdout()))
         }
-    } else {
-        writeln!(writer, "{}{}", word, suffix)?;
     }
-    Ok(())
+
+    fn transform_keywords(&mut self) {
+        let mut set = HashSet::<String>::with_capacity(self.keywords.len());
+        self.keywords.iter().for_each(|s| {
+            set.insert(s.to_string());
+            for t in &self.transform {
+                if let Some(word) = t.transform(s.as_ref()) {
+                    set.insert(word);
+                }
+            }
+        });
+        self.keywords.clear();
+        self.keywords.extend(set.into_iter());
+    }
+
+    fn keywords(&self) -> Rc<[&str]> {
+        self.keywords
+            .iter()
+            .map(|s| s.as_str())
+            .collect::<Vec<_>>()
+            .into()
+    }
 }
 
-fn write_with_prefix<W>(writer: &mut W, word: &str, prefix: &str, min: Option<usize>) -> Result<()>
-where
-    W: io::Write,
-{
-    if let Some(m) = min {
-        if (word.len() + prefix.len()) >= m {
-            writeln!(writer, "{}{}", prefix, word)?;
-        }
-    } else {
-        writeln!(writer, "{}{}", prefix, word)?;
-    }
-    Ok(())
-}
-
+// wirite combined sub with combine
+// if any prefixes write with prefix
+// if any suffixes write wirh suffix
+// if min specified this function not write while
+// word length + prefix length < min
+// or word length + suffix length < min
 fn write_combine<W>(
     writer: &mut W,
     sub: &[&str],
@@ -206,6 +205,40 @@ where
         for s in suff {
             write_with_suffix(writer, &word, s, min)?;
         }
+    }
+    Ok(())
+}
+
+// write word with prefix
+// if min specified this function not write while
+// word leng + prefix len < min
+fn write_with_prefix<W>(writer: &mut W, word: &str, prefix: &str, min: Option<usize>) -> Result<()>
+where
+    W: io::Write,
+{
+    if let Some(m) = min {
+        if (word.len() + prefix.len()) >= m {
+            writeln!(writer, "{}{}", prefix, word)?;
+        }
+    } else {
+        writeln!(writer, "{}{}", prefix, word)?;
+    }
+    Ok(())
+}
+
+// write word with suffix
+// if min specified this function not write while
+// word leng + suffix len < min
+fn write_with_suffix<W>(writer: &mut W, word: &str, suffix: &str, min: Option<usize>) -> Result<()>
+where
+    W: io::Write,
+{
+    if let Some(m) = min {
+        if (word.len() + suffix.len()) >= m {
+            writeln!(writer, "{}{}", word, suffix)?;
+        }
+    } else {
+        writeln!(writer, "{}{}", word, suffix)?;
     }
     Ok(())
 }
