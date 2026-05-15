@@ -1,6 +1,10 @@
-use morphx_wordlist::cli::{Cli, Command};
+use clap::Parser;
+use morphx_wordlist::cli::Cli;
 
 fn main() {
-    let cli = Cli::parse_args();
-    _ = cli;
+    let cli = Cli::parse().sanitize();
+    match cli.run() {
+        Err(e) => eprintln!("{e}"),
+        _ => (),
+    }
 }

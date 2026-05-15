@@ -1,8 +1,22 @@
-use std::{rc::Rc, str::FromStr};
-
-use itertools::Itertools;
-
 use crate::error::Error;
+use itertools::Itertools;
+use std::str::FromStr;
+
+pub const SAMPLER_LONG_HELP: &str = "\
+List of sampling strategies used to generate
+word combinations. Values are separated by
+commas.
+
+Example:
+    -s permutation:2,combination:3
+    equal to
+    -s p:2,c:3
+
+Valid samplers:
+    p:<SIZE>    permutation:<SIZE>
+    c:<SIZE>    combination:<SIZE>
+    C:<SIZE>    cartesian-product:<SIZE>
+";
 
 #[derive(Debug, Clone)]
 pub enum Sampler {
@@ -12,25 +26,20 @@ pub enum Sampler {
 }
 
 impl Sampler {
-    pub fn sample_iter<'a>(
-        &self,
-        s: &'a [&'a str],
-    ) -> Box<dyn Iterator<Item = Rc<[&'a str]>> + 'a> {
+    pub fn sample_iter<'a>(&self, s: &'a [&'a str]) -> Box<dyn Iterator<Item = Vec<&'a str>> + 'a> {
         match self {
             Self::Permutation(size) => Box::new(
-                itertools::Itertools::permutations(s.iter().copied(), *size)
-                    .map(|v| Rc::<[&str]>::from(v)),
+                itertools::Itertools::permutations(s.iter().copied(), *size).map(|v| v.to_vec()),
             ),
 
             Self::Combination(size) => Box::new(
-                itertools::Itertools::combinations(s.iter().copied(), *size)
-                    .map(|v| Rc::<[&str]>::from(v)),
+                itertools::Itertools::combinations(s.iter().copied(), *size).map(|v| v.to_vec()),
             ),
 
             Self::CartesianProduct(size) => Box::new(
                 std::iter::repeat_n(s.iter().copied(), *size)
                     .multi_cartesian_product()
-                    .map(|v| Rc::<[&str]>::from(v)),
+                    .map(|v| v.to_vec()),
             ),
         }
     }

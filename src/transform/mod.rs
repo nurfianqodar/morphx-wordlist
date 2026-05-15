@@ -2,12 +2,38 @@ mod leetspeak;
 mod sponge;
 mod title;
 
-use crate::{
-    error::Error,
-    transform::{leetspeak::Leetspeak, sponge::Sponge, title::Titlecase},
-};
+use crate::error::Error;
+use leetspeak::Leetspeak;
+use sponge::Sponge;
 pub use sponge::SpongeVariant;
 use std::str::FromStr;
+use title::Titlecase;
+
+// READ FromStr Implemetation For Transform!
+pub const TRANSFORM_LONG_HELP: &str = "\
+List of functions used to transform keywords
+into various forms. Values are separated by
+commas.
+
+Example:
+    -t leet,upper,lower
+    equal to
+    -t L,u,l
+
+Valid transformers:
+    o           original
+    u           upper
+    l           lower
+    L           leetspeak
+    s:<VARIANT> sponge:<VARIANT>
+    r           reverse
+    t           title
+
+Sponge variant:
+    u           upper-first
+    l           lower-first
+    r           random
+";
 
 #[derive(Debug, Clone)]
 pub enum Transform {
@@ -42,6 +68,7 @@ impl Transform {
 impl FromStr for Transform {
     type Err = Error;
 
+    // READ TRANSFORM_LONG_HELP!
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (name, arg) = s.split_once(':').unwrap_or((s, ""));
         match name {

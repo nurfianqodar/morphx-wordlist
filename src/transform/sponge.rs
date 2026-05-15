@@ -1,8 +1,6 @@
-use std::str::FromStr;
-
-use rand::RngExt;
-
 use crate::error::Error;
+use rand::RngExt;
+use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub enum SpongeVariant {

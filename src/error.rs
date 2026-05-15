@@ -1,8 +1,10 @@
-use std::{fmt::Display, io};
+use std::error::Error as StdError;
+use std::fmt::Display;
+use std::io::Error as IoError;
 
 #[derive(Debug)]
 pub enum Error {
-    Io(io::Error),
+    Io(IoError),
     Arg(&'static str),
 }
 
@@ -15,10 +17,10 @@ impl Display for Error {
     }
 }
 
-impl std::error::Error for Error {}
+impl StdError for Error {}
 
-impl From<io::Error> for Error {
-    fn from(value: io::Error) -> Self {
+impl From<IoError> for Error {
+    fn from(value: IoError) -> Self {
         Self::Io(value)
     }
 }

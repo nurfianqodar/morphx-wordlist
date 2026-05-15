@@ -1,6 +1,32 @@
 mod random_symbols;
-use crate::{combine::random_symbols::JoinRandomSymbols, error::Error};
+
+use crate::error::Error;
+use random_symbols::JoinRandomSymbols;
 use std::str::FromStr;
+
+pub const COMBINE_LONG_HELP: &str = "\
+List of functions used to combine generated
+keywords. Values are separated by commas.
+
+Example:
+    -c concat,separator:-,random-symbols:_!?
+    equal to
+    -c c,s:-,r:_!?
+
+Valid combiners:
+    c           concat
+    s           separator:<TEXT>
+    r:<SYMBOLS> random-symbols:<SYMBOLS>
+
+Notes:
+    separator:<TEXT>
+        Uses the provided text literally as a
+        separator.
+
+    random-symbols:<SYMBOLS>
+        Randomly selects one character from
+        SYMBOLS between combined words.
+";
 
 #[derive(Debug, Clone)]
 pub enum Combine {
