@@ -29,10 +29,7 @@ impl SpongeVariant {
         match self {
             Self::UpperFirst => is_even,
             Self::LowerFirst => !is_even,
-            Self::Random => {
-                let mut rng = rand::rng();
-                rng.random_bool(0.5)
-            }
+            Self::Random => rand::random(),
         }
     }
 }
@@ -46,13 +43,15 @@ where
     S: AsRef<str>,
 {
     fn to_sponge(&self, variant: SpongeVariant) -> String {
-        let mut out = String::with_capacity(self.as_ref().len());
-        for (i, c) in self.as_ref().chars().enumerate() {
-            if variant.should_uppercase(i) {
-                out.push(c.to_ascii_uppercase());
+        let s = self.as_ref();
+        let mut out = String::with_capacity(s.len());
+        for (i, c) in s.chars().enumerate() {
+            let c = if variant.should_uppercase(i) {
+                c.to_ascii_uppercase()
             } else {
-                out.push(c.to_ascii_lowercase());
-            }
+                c.to_ascii_lowercase()
+            };
+            out.push(c);
         }
         out
     }

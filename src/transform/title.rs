@@ -7,18 +7,22 @@ where
     S: AsRef<str>,
 {
     fn to_titlecase(&self) -> String {
-        self.as_ref()
-            .split_whitespace()
-            .map(|word| {
-                let mut chars = word.chars();
-                match chars.next() {
-                    Some(first) => {
-                        first.to_uppercase().collect::<String>() + &chars.as_str().to_lowercase()
-                    }
-                    None => String::new(),
-                }
-            })
-            .collect::<Vec<_>>()
-            .join("")
+        let s = self.as_ref();
+        let mut out = String::with_capacity(s.len());
+        let mut new_word = true;
+        for c in s.chars() {
+            if c.is_whitespace() {
+                new_word = true;
+                out.push(c);
+                continue;
+            }
+            if new_word {
+                new_word = false;
+                out.push(c.to_ascii_uppercase());
+            } else {
+                out.push(c.to_ascii_lowercase());
+            }
+        }
+        out
     }
 }
